@@ -6,28 +6,34 @@ describe Bookmark do
       connection = PG.connect(dbname: 'bookmark_manager_test')
 
       # Add the test data
-      Bookmark.create(url: "http://www.makersacademy.com")
-      Bookmark.create(url: "http://www.destroyallsoftware.com")
-      Bookmark.create(url: "http://www.google.com")
+      Bookmark.create(url: "http://www.makersacademy.com", title: "Makers Academy")
+      Bookmark.create(url: "http://www.destroyallsoftware.com", title: "Destroy All Software")
+      Bookmark.create(url: "http://www.google.com", title: "Google")
 
       bookmarks = Bookmark.all
+      bookmark = bookmarks.first
 
-      expect(bookmarks).to include('http://www.makersacademy.com')
-      expect(bookmarks).to include('http://www.destroyallsoftware.com')
-      expect(bookmarks).to include('http://www.google.com')
+      expect(bookmarks.length).to eq 3
+      expect(bookmark).to be_a Bookmark
+      expect(bookmark).to respond_to(:id)
+      expect(bookmark.title).to eq 'Makers Academy'
+      expect(bookmark.url).to eq 'http://www.makersacademy.com'
     end
   end
 
   describe '.create' do
-    it 'creates the bookmark' do
-      Bookmark.create(url: 'http://www.testbookmark.com')
-      expect(Bookmark.all).to include 'http://www.testbookmark.com'
+    it 'creates a new bookmark' do
+      bookmark = Bookmark.create(url: 'http://www.testbookmark.com', title: 'Test Bookmark')
+
+      expect(bookmark).to be_a Bookmark
+      expect(bookmark).to respond_to(:id)
+      expect(bookmark.title).to eq 'Test Bookmark'
     end
 
     it 'validates the URL' do
-      Bookmark.create(url: 'not a valid url')
+      bookmark = Bookmark.create(url: 'not a valid url', title: 'not url')
 
-      expect(Bookmark.all).not_to include 'not a valid url'
+      expect(bookmark).not_to be_a Bookmark
     end
   end
 end
