@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'sinatra/flash'
 require 'uri'
 require_relative './lib/bookmark'
+require_relative './lib/comment'
 require_relative './database_connection_setup'
 
 class BookmarkManager < Sinatra::Base
@@ -40,6 +41,16 @@ class BookmarkManager < Sinatra::Base
     connection = PG.connect(dbname: 'bookmark_manager_test')
     connection.exec("UPDATE bookmarks SET url = '#{params[:url]}', title = '#{params[:title]}' WHERE id = '#{params[:id]}'")
     redirect('/bookmarks')
+  end
+
+  get '/bookmarks/:id/comments/new' do
+    @bookmark_id = params[:id]
+    erb :'comments/new'
+  end
+
+  post '/bookmarks/:id/comments' do
+    Comment.create(bookmark_id: params[:id], text: params[:comment])
+    redirect '/bookmarks'
   end
 
   run! if app_file == $0

@@ -1,6 +1,7 @@
 require 'pg'
 require 'uri'
 require_relative './database_connection'
+require_relative './comment'
 
 class Bookmark
   def self.all
@@ -40,6 +41,10 @@ class Bookmark
     @id = id
     @title = title
     @url = url
+  end
+
+  def comments(comment_class = Comment)
+    comment_class.where(bookmark_id: id)
   end
 
   private
