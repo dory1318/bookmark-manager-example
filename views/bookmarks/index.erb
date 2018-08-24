@@ -29,7 +29,11 @@
         <h2>Tags</h2>
         <ul>
           <% bookmark.tags.each do |tag| %>
-            <li><%= tag.content %></li>
+            <li>
+              <a href="/tags/<%= tag.id %>/bookmarks">
+                <%= tag.content %>
+              </a>
+            </li>
           <% end %>
         </ul>
       </div>

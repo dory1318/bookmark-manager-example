@@ -1,4 +1,6 @@
 require 'bookmark'
+require 'tag'
+require 'bookmark_tag'
 
 describe Bookmark do
   let(:comment_class) { double(:comment_class) }
@@ -72,6 +74,25 @@ describe Bookmark do
       expect(result.id).to eq bookmark.id
       expect(result.title).to eq 'Makers Academy'
       expect(result.url).to eq 'http://www.makersacademy.com'
+    end
+  end
+
+  describe '.where' do
+    it 'returns all bookmarks linked to the given tag id' do
+      bookmark1 = Bookmark.create(title: 'Makers Academy', url: 'http://www.makersacademy.com')
+      bookmark2 = Bookmark.create(url: "http://www.destroyallsoftware.com", title: "Destroy All Software")
+      tag = Tag.create(content: 'test tag')
+      BookmarkTag.create(bookmark_id: bookmark1.id, tag_id: tag.id)
+      BookmarkTag.create(bookmark_id: bookmark2.id, tag_id: tag.id)
+
+      bookmarks = Bookmark.where(tag_id: tag.id)
+      bookmark = bookmarks.first
+
+      expect(bookmarks.length).to eq 2
+      expect(bookmark).to be_a Bookmark
+      expect(bookmark.id).to eq bookmark1.id
+      expect(bookmark.title).to eq bookmark1.title
+      expect(bookmark.url).to eq bookmark1.url
     end
   end
 
